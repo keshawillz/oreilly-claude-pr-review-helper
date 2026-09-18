@@ -1,4 +1,4 @@
-"""Day 6: one tool, and the loop that serves it.
+"""Day 7: three tools, one dispatch table, and a turn cap.
 
     python src/reviewer.py demos/diffs/day06.diff --repo sample_app
 """
@@ -6,10 +6,40 @@ import json
 import sys
 
 import tools
-from helpers import first_text
-from review import client, rubric, schema
+from helpers import first_text, parse_diff
+from review import MODEL, client, keep_trustworthy, rubric, schema, validate
 
+MAX_TURNS = 8
 FINDINGS_FORMAT = {"format": {"type": "json_schema", "schema": schema}}
+
+
+def ask_claude(messages):
+    return client.messages.create(
+        model=MODEL,
+        max_tokens=4096,
+        system=rubric,
+        tools=tools.TOOLS,
+        messages=messages,
+        output_config=FINDINGS_FORMAT,
+    )
+
+
+def run_tool(block):
+    result = {"type": "tool_result", "tool_use_id": block.id}
+    try:
+        handler = tools.HANDLERS[block.name]       # look up by tool name
+        output = handler(**block.input)            # pass arguments by name
+        result["content"] = str(output)
+    except Exception as error:                     # tell Claude, so it can adjust
+        result["content"] = f"Error: {error}"
+        result["is_error"] = True
+    return result
+
+
+def add_turn(messages, response, results):
+    messages.append({"role": "assistant", "content": response.content})
+    messages.append({"role": "user", "content": results})
+    return messages
 
 
 def review_with_tools(diff_text, repo_dir="sample_app"):
@@ -17,22 +47,25 @@ def review_with_tools(diff_text, repo_dir="sample_app"):
     tools.CONTEXT["diff_text"] = diff_text
     messages = [{"role": "user", "content": "Review this diff:\n\n" + diff_text}]
 
-    while True:
-        response = client.messages.create(
-            model="claude-sonnet-5", max_tokens=4096, system=rubric,
-            tools=tools.TOOLS, messages=messages, output_config=FINDINGS_FORMAT)
+    finished = False
+    for turn in range(MAX_TURNS):      # the Day 6 loop, now with a cap
+        response = ask_claude(messages)
         if response.stop_reason != "tool_use":
-            break                                  # Claude is finished
-        messages.append({"role": "assistant", "content": response.content})
+            finished = True
+            break
         results = []
         for block in response.content:
             if block.type == "tool_use":
-                text = tools.get_file(block.input["path"])   # stays in the repo
-                results.append({"type": "tool_result",
-                                "tool_use_id": block.id, "content": text})
-        messages.append({"role": "user", "content": results})
+                results.append(run_tool(block))
+        messages = add_turn(messages, response, results)
+    if not finished:
+        raise RuntimeError(f"No answer after {MAX_TURNS} turns")
 
-    return json.loads(first_text(response))["findings"]
+    findings = json.loads(first_text(response))["findings"]
+    visible = parse_diff(diff_text)
+    for problem in validate(findings, visible):
+        print("  dropped:", problem, file=sys.stderr)
+    return keep_trustworthy(findings, visible)
 
 
 if __name__ == "__main__":
