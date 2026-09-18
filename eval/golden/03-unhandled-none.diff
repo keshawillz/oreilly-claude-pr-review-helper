@@ -1,0 +1,10 @@
+diff --git a/app/orders.py b/app/orders.py
+--- a/app/orders.py
++++ b/app/orders.py
+@@ -24,6 +24,4 @@
+ 
+ def get_order_status(conn, order_id):
+     order = db.find_order(conn, order_id)
+-    if order is None:
+-        raise OrderNotFound(f"order {order_id} does not exist")
+     return order["status"]

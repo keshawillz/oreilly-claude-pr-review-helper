@@ -1,0 +1,12 @@
+diff --git a/app/auth.py b/app/auth.py
+--- a/app/auth.py
++++ b/app/auth.py
+@@ -22,7 +22,7 @@
+ def token_is_valid(expires_at, now=None):
+     if now is None:
+         now = time.time()
+-    return now < expires_at
++    return now > expires_at
+ 
+ 
+ def login(conn, email, password):

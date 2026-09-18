@@ -1,0 +1,122 @@
+[
+  {
+    "id": "01-sql-injection",
+    "diff": "eval/golden/01-sql-injection.diff",
+    "expected": [
+      {
+        "file": "app/db.py",
+        "line": 20,
+        "severity": "critical",
+        "issue": "User input is formatted straight into the SQL string."
+      }
+    ]
+  },
+  {
+    "id": "02-pagination-off-by-one",
+    "diff": "eval/golden/02-pagination-off-by-one.diff",
+    "expected": [
+      {
+        "file": "app/db.py",
+        "line": 39,
+        "severity": "major",
+        "issue": "Page 1 skips the first page of results."
+      }
+    ]
+  },
+  {
+    "id": "03-unhandled-none",
+    "diff": "eval/golden/03-unhandled-none.diff",
+    "expected": [
+      {
+        "file": "app/orders.py",
+        "line": 27,
+        "severity": "major",
+        "issue": "find_order can return None, and the result is indexed anyway."
+      }
+    ]
+  },
+  {
+    "id": "04-hardcoded-secret",
+    "diff": "eval/golden/04-hardcoded-secret.diff",
+    "expected": [
+      {
+        "file": "app/auth.py",
+        "line": 9,
+        "severity": "critical",
+        "issue": "A signing secret is committed to the repo."
+      }
+    ]
+  },
+  {
+    "id": "05-mutable-default",
+    "diff": "eval/golden/05-mutable-default.diff",
+    "expected": [
+      {
+        "file": "app/orders.py",
+        "line": 18,
+        "severity": "minor",
+        "issue": "A list as a default argument is shared between calls."
+      }
+    ]
+  },
+  {
+    "id": "06-divide-by-zero",
+    "diff": "eval/golden/06-divide-by-zero.diff",
+    "expected": [
+      {
+        "file": "app/pricing.py",
+        "line": 22,
+        "severity": "major",
+        "issue": "An empty list now divides by zero."
+      }
+    ]
+  },
+  {
+    "id": "07-cross-file-percent",
+    "diff": "eval/golden/07-cross-file-percent.diff",
+    "expected": [
+      {
+        "file": "app/orders.py",
+        "line": 16,
+        "severity": "major",
+        "issue": "apply_discount expects a fraction. 15 raises ValueError."
+      }
+    ]
+  },
+  {
+    "id": "08-swallowed-exception",
+    "diff": "eval/golden/08-swallowed-exception.diff",
+    "expected": [
+      {
+        "file": "app/orders.py",
+        "line": 24,
+        "severity": "major",
+        "issue": "A failed insert is swallowed and the caller gets None."
+      }
+    ]
+  },
+  {
+    "id": "09-inverted-expiry",
+    "diff": "eval/golden/09-inverted-expiry.diff",
+    "expected": [
+      {
+        "file": "app/auth.py",
+        "line": 25,
+        "severity": "critical",
+        "issue": "The comparison is inverted. Expired tokens pass, valid ones fail."
+      }
+    ]
+  },
+  {
+    "id": "10-password-in-logs",
+    "diff": "eval/golden/10-password-in-logs.diff",
+    "expected": [
+      {
+        "file": "app/auth.py",
+        "line": 29,
+        "severity": "critical",
+        "issue": "The plaintext password is written to the log."
+      }
+    ]
+  }
+]

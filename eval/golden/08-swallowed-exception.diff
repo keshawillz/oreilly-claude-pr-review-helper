@@ -1,0 +1,15 @@
+diff --git a/app/orders.py b/app/orders.py
+--- a/app/orders.py
++++ b/app/orders.py
+@@ -19,7 +19,10 @@
+     if not items:
+         raise ValueError("an order needs at least one item")
+     total = order_total(items, code)
+-    return db.insert_order(conn, user_id, total)
++    try:
++        return db.insert_order(conn, user_id, total)
++    except Exception:
++        pass
+ 
+ 
+ def get_order_status(conn, order_id):
