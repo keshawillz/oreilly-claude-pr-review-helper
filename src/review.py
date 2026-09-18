@@ -1,21 +1,27 @@
+import json
 import sys
+
 import anthropic
 
-client = anthropic.Anthropic()   # reads ANTHROPIC_API_KEY
-diff_text = open(sys.argv[1]).read()
+from helpers import ROOT, first_text
 
-response = client.messages.create(
-    model="claude-sonnet-5",
-    max_tokens=1024,
-    system="You are a careful code reviewer. Be specific.",
-    messages=[{"role": "user",
-               "content": "Review this diff:\n\n" + diff_text}],
-)
+client = anthropic.Anthropic()
+# One schema file. Day 12 hands this same file to the CLI.
+schema = json.load(open(ROOT / "schemas" / "findings.json"))
 
-for block in response.content:     # the reply is a list of blocks
-    if block.type == "text":
-        print(block.text)
 
-print("stop_reason:", response.stop_reason)
-print("tokens in:", response.usage.input_tokens)
-print("tokens out:", response.usage.output_tokens)
+def review_diff(diff_text):
+    response = client.messages.create(
+        model="claude-sonnet-5",
+        max_tokens=4096,
+        messages=[{"role": "user",
+                   "content": "Review this diff:\n\n" + diff_text}],
+        output_config={"format": {"type": "json_schema",
+                                  "schema": schema}},
+    )
+    return json.loads(first_text(response))["findings"]
+
+
+if __name__ == "__main__":
+    for f in review_diff(open(sys.argv[1]).read()):
+        print(f["severity"], f["file"], f["line"], "-", f["issue"])

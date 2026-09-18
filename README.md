@@ -24,7 +24,17 @@ cat demos/day07_multi_tool.sh
 bash demos/day07_multi_tool.sh
 ```
 
-`main` holds the finished build.
+`main` holds the latest session.
+
+### Get each new session
+
+```bash
+git checkout main
+git pull
+git checkout day-03
+```
+
+Swap `day-03` for the session you want. If you edited files during a session, run `git checkout -- .` first.
 
 ## Try it without spending tokens
 
