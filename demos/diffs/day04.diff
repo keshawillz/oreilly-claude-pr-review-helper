@@ -1,0 +1,24 @@
+diff --git a/app/orders.py b/app/orders.py
+--- a/app/orders.py
++++ b/app/orders.py
+@@ -24,6 +24,4 @@
+ 
+ def get_order_status(conn, order_id):
+     order = db.find_order(conn, order_id)
+-    if order is None:
+-        raise OrderNotFound(f"order {order_id} does not exist")
+     return order["status"]
+diff --git a/app/pricing.py b/app/pricing.py
+--- a/app/pricing.py
++++ b/app/pricing.py
+@@ -15,7 +15,9 @@
+ 
+ 
+ def add_tax(total):
+-    return round(total * (1 + TAX_RATE), 2)
++    """Return total with sales tax added."""
++    with_tax = total * (1 + TAX_RATE)
++    return round(with_tax, 2)
+ 
+ 
+ def average_item_price(items):

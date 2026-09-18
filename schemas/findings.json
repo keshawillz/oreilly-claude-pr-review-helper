@@ -10,9 +10,10 @@
           "file": {"type": "string", "description": "Path as shown in the diff, without the a/ or b/ prefix."},
           "line": {"type": "integer", "description": "Line number in the new version of the file."},
           "issue": {"type": "string", "description": "What is wrong and why it matters in this code."},
-          "suggestion": {"type": "string", "description": "The concrete change that fixes it."}
+          "suggestion": {"type": "string", "description": "The concrete change that fixes it."},
+          "confidence": {"type": "number", "description": "From 0 to 1. How sure you are that this is a real problem."}
         },
-        "required": ["severity", "file", "line", "issue", "suggestion"],
+        "required": ["severity", "file", "line", "issue", "suggestion", "confidence"],
         "additionalProperties": false
       }
     }
