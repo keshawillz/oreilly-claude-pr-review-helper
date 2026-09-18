@@ -40,3 +40,18 @@ def parse_diff(diff_text):
             new_line += 1
         # lines that start with "-" exist only in the old file, so skip them
     return visible
+
+
+# ---- Day 06: read files safely ----
+def read_repo_file(repo_dir, path):
+    """Read a file for Claude, but only if it sits inside repo_dir.
+
+    A path that comes from the model is untrusted input.
+    """
+    repo_dir = Path(repo_dir).resolve()
+    target = (repo_dir / path).resolve()
+    if repo_dir != target and repo_dir not in target.parents:
+        raise ValueError(f"{path} is outside the repository")
+    if not target.is_file():
+        raise ValueError(f"{path} does not exist")
+    return target.read_text()
