@@ -1,0 +1,4 @@
+[
+  {"user_id": 1, "code": null, "items": [{"price": 10.0, "quantity": 2}]},
+  {"user_id": 2, "code": "VIP20", "items": [{"price": 50.0, "quantity": 1}, {"price": 25.0, "quantity": 2}]}
+]

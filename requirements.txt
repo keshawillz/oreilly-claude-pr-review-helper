@@ -1,0 +1,5 @@
+anthropic>=1.0
+pyflakes
+pytest
+jsonschema
+pyyaml

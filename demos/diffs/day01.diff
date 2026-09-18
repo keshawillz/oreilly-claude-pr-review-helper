@@ -1,0 +1,24 @@
+diff --git a/app/orders.py b/app/orders.py
+--- a/app/orders.py
++++ b/app/orders.py
+@@ -15,7 +15,7 @@
+     return pricing.add_tax(subtotal)
+ 
+ 
+-def create_order(conn, user_id, items, code=None):
++def create_order(conn, user_id, items=[], code=None):
+     if not items:
+         raise ValueError("an order needs at least one item")
+     total = order_total(items, code)
+diff --git a/app/pricing.py b/app/pricing.py
+--- a/app/pricing.py
++++ b/app/pricing.py
+@@ -19,8 +19,6 @@
+ 
+ 
+ def average_item_price(items):
+-    if not items:
+-        return 0.0
+     total = 0.0
+     for item in items:
+         total += item["price"]
