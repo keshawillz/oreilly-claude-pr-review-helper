@@ -35,6 +35,7 @@ No key yet? See "Try it without spending tokens" in the README.
 - `jq` on your path (Day 12), for reading fields out of the JSON envelope
   - macOS: `brew install jq`
   - Ubuntu or Debian: `sudo apt-get install jq`
+- macOS only: `brew install coreutils` (Day 11). The hang demo uses `timeout`, which macOS lacks. The script falls back to `gtimeout`.
 
 ## Before Week 4 (Day 17)
 - Your own copy of `oreilly-claude-review-target`, so you can run the workflow yourself
