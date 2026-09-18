@@ -16,8 +16,21 @@
         "required": ["severity", "file", "line", "issue", "suggestion", "confidence"],
         "additionalProperties": false
       }
+    },
+    "suggested_tests": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "target": {"type": "string"},
+          "case": {"type": "string"},
+          "gap": {"type": "string"}
+        },
+        "required": ["target", "case", "gap"],
+        "additionalProperties": false
+      }
     }
   },
-  "required": ["findings"],
+  "required": ["findings", "suggested_tests"],
   "additionalProperties": false
 }
