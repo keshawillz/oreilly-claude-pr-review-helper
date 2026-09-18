@@ -1,0 +1,27 @@
+name: Claude PR review
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    continue-on-error: true          # fail open: an outage never blocks a merge
+    permissions:                     # the workflow token stays read-only
+      contents: read
+      pull-requests: read
+      id-token: write                # lets the Claude GitHub App post comments
+    steps:
+      - uses: actions/checkout@v6
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: "/pr-review ${{ github.event.number }}"
+          claude_args: |
+            --model claude-sonnet-5
+            --permission-mode dontAsk
+            --max-turns 25
+            --max-budget-usd 1.00
+            --append-system-prompt-file prompts/reviewer.md
+            --allowedTools "Read,Grep,Bash(gh pr diff:*),Bash(gh pr view:*),mcp__github_inline_comment__create_inline_comment"
+            --disallowedTools "Edit,Write,WebFetch"
+
